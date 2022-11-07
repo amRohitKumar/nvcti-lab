@@ -3,17 +3,16 @@ import { EventFormSubmitted } from "../../../components";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { fetchEvents } from "../../../features/events/eventsSlice";
 import customFetch from "../../../utils/axios";
 
 const AdminViewForm = () => {
   const onAccept = () => {};
   const onReject = () => {};
-  const dispathc = useDispatch();
+  const dispatch = useDispatch();
   const { eventId, userId } = useParams();
   const reqObj = {};
   useEffect(() => {
-    dispatch(fetchEvents());
+    
   }, []);
   const events = useSelector((state) => state.events.events);
   if (events.length) {
