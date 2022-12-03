@@ -2,7 +2,7 @@
 #### There are two models
 - user
     - New user created is stored in "user" collection of "nvcti-lab" database.
-    - The field "enrolledEvents" is where the ObjectID of forms submitted by the user is stored as an array, other fields are self explainatory.
+    - The field "formSubmitted" is where the ObjectID of forms submitted by the user is stored as an array, other fields are self explainatory.
 - form
     - A schema of a typical lab-access form
 - evaluator
