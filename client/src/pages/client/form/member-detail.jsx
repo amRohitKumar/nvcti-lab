@@ -9,6 +9,7 @@ import {
   Select,
   InputLabel,
 } from "@mui/material";
+import { uploadImg } from "../../../utils/imageHelper";
 
 const MemberDetail = ({index, member, handleMembers}) => {
   return (
@@ -129,7 +130,16 @@ const MemberDetail = ({index, member, handleMembers}) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <input type="file" name="leader-img" id="" />
+            <input type="file" accept="image/png, image/jpeg"  name="imgUrl" id="" onChange={ async(e)=>{
+              const res = await uploadImg(e.target.files[0]);
+              const event = {
+                target:{
+                  name:'imgUrl',
+                  value:res.display_url 
+                }
+              }
+              handleMembers(event,index);
+            }}  />
           </Grid>
         </Grid>
       </Paper>

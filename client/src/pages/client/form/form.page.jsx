@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState , useRef, useEffect} from "react";
 import customFetch from "../../../utils/axios";
 import authHeader from "../../../utils/userAuthHeaders";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Wrapper from "./form.style";
+import { uploadImg } from "../../../utils/imageHelper";
 
 import {
   Paper,
@@ -107,6 +108,7 @@ const FormApplication = () => {
     });
     setMembers(data);
   };
+  
 
   const handleSubmit = async () => {
     try {
@@ -137,7 +139,14 @@ const FormApplication = () => {
       toast.error("Something went wrong while submitting !");
     }
   };
+  const leaderImgRef = useRef();
+const leaderSignRef = useRef();
+useEffect(()=>{
+  console.log("Hello Member", members, leader)
+console.log(leaderImgRef.current.value, leaderSignRef.current.value);
+})
 
+ 
   return (
     <Wrapper sx={{ width: { lg: "75%", md: "80%", sm: "85%", xs: "95%" } }}>
       {isLoading&&<CircularLoader />}
@@ -337,7 +346,10 @@ const FormApplication = () => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <input type="file" name="leader-img" id="" />
+            <input type="file" ref={leaderImgRef} accept="image/png, image/jpeg" name="leader-img" onChange={ async(e)=>{
+              const res = await uploadImg(e.target.files[0]);
+              setLeader({ ...leader, imgUrl: res.display_url })
+            }} id="" />
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -511,8 +523,9 @@ const FormApplication = () => {
           <div>
             <span style={{ fontWeight: "bold" }}>Team Leader signature:</span>{" "}
             &nbsp;
-            <input type="file" name="leader-sign" />
+            <input type="file" accept="image/png, image/jpeg" ref={leaderSignRef} name="leader-sign" />
           </div>
+
           <Button variant="contained" onClick={handleSubmit}>
             Submit
           </Button>
