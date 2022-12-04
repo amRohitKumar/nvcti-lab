@@ -132,7 +132,17 @@ const formSchema = new Schema(
     },
     comments: [{
       type: String 
-    }]
+    }],
+    superadminComments: [{
+      type: String
+    }],
+    forwardedBy: [{
+      type: String
+    }],
+    reEvaluation: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: {
