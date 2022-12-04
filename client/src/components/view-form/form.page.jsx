@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import customFetch from "../../utils/axios";
 import authHeader from "../../utils/userAuthHeaders";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Wrapper from "./form.style";
+import { DownloadIcon } from "../../icons";
 
 import {
   Paper,
@@ -21,12 +23,11 @@ import {
   FormGroup,
   Grid,
   InputLabel,
+  Tooltip,
 } from "@mui/material";
 
 import MemberDetail from "./member-detail";
-import { useSelector } from "react-redux";
 import { CircularLoader } from "..";
-import { useEffect } from "react";
 
 const ViewFormApplication = () => {
   // getting the document
@@ -37,7 +38,7 @@ const ViewFormApplication = () => {
   // console.log(formId);
   const [event, setEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState({comment: '', verdict: ''});
   useEffect(() => {
     const fetchForm = async () => {
       try {
@@ -69,6 +70,43 @@ const ViewFormApplication = () => {
     setIsLoading(false);
     toast.success("Comment added successfully !");
   };
+  const PDFutil = async () => {
+    try {
+      const tokenObj = localStorage.getItem("user");
+      console.log("loading starts ....");
+      const resp = await customFetch.post(
+        "/printapplication",
+        { baseUrl: `/view/${formId}`, tokenObj },
+        {
+          responseType: "blob",
+          headers: {
+            Accept: "application/pdf",
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(resp);
+      return resp;
+    } catch (err) {
+      console.log("error in pdf util = ", err);
+    }
+  };
+  const handlePDFDownload = async () => {
+    try {
+      setIsLoading(true);
+      const response = await PDFutil();
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      setIsLoading(false);
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `${event.name}-application.pdf`;
+      link.click();
+    } catch (err) {
+      setIsLoading(false);
+      toast.error("Something went wrong while downloading PDF");
+      console.log(err);
+    }
+  };
   const handleStatus = async (status) => {
     try {
       setIsLoading(true);
@@ -86,18 +124,55 @@ const ViewFormApplication = () => {
       toast.error("Something went wrong !");
     }
   };
+
+  const handleRevert = async () => {
+    try {
+      setIsLoading(true);
+      const resp = await customFetch.post(
+        "/evaluator/revert",
+        { applicantId: formId },
+        authHeader(token)
+      );
+      setIsLoading(false);
+      toast.success(resp.data.msg);
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false);
+      toast.error("Something went wrong while reverting application !");
+    }
+  };
+
   if (!event || isLoading) {
     return <CircularLoader />;
   }
   return (
     <Wrapper sx={{ width: { lg: "75%", md: "80%", sm: "85%", xs: "95%" } }}>
+      <Tooltip title="Download PDF">
+        <DownloadIcon
+          id="print-button"
+          sx={{
+            position: "absolute",
+            top: "25px",
+            right: "45px",
+            transform: "scale(2)",
+            fill: "#6e6ee5",
+            cursor: "pointer",
+            "@media(max-width: 750px)": {
+              position: "relative",
+              right: "0px",
+              marginBottom: "1em",
+            },
+          }}
+          onClick={handlePDFDownload}
+        />
+      </Tooltip>
       <Box>
         <Typography variant="h2" gutterBottom align="center">
           APPLICATION FORM TO ACCESS THE NVCTI LAB
         </Typography>
-        <Typography variant="h5" gutterBottom align="center">
+        {/* <Typography variant="h5" gutterBottom align="center">
           (Please fill and submit your application to NVCTI office)
-        </Typography>
+        </Typography> */}
       </Box>
       <Paper className="column-center" sx={{ my: 2, p: 2 }}>
         <Typography>
@@ -154,9 +229,10 @@ const ViewFormApplication = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={event.unit.includes(
-                  "Electronics Circuits and IoT Unit"
-                )}
+                checked={
+                  event.unit &&
+                  event.unit.includes("Electronics Circuits and IoT Unit")
+                }
               />
             }
             label="Electronics Circuits and IoT Unit"
@@ -165,9 +241,10 @@ const ViewFormApplication = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={event.unit.includes(
-                  "Gaming and Animation Design Unit"
-                )}
+                checked={
+                  event.unit &&
+                  event.unit.includes("Gaming and Animation Design Unit")
+                }
               />
             }
             label="Gaming and Animation Design Unit"
@@ -176,9 +253,10 @@ const ViewFormApplication = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={event.unit.includes(
-                  "Pouch Battery Cell Assembly Unit"
-                )}
+                checked={
+                  event.unit &&
+                  event.unit.includes("Pouch Battery Cell Assembly Unit")
+                }
               />
             }
             label="Pouch Battery Cell Assembly Unit"
@@ -187,7 +265,10 @@ const ViewFormApplication = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={event.unit.includes("Robotics and Automation Unit")}
+                checked={
+                  event.unit &&
+                  event.unit.includes("Robotics and Automation Unit")
+                }
               />
             }
             label="Robotics and Automation Unit"
@@ -278,19 +359,19 @@ const ViewFormApplication = () => {
               value={event.address}
               required
               fullWidth
-              label="Address (IIT-ISM students should write the Hostel address )"
+              label="Address (IIT (ISM) students should write the Hostel address )"
               color="primary"
               disabled
             />
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               size="small"
               name="email"
               type="email"
-              value={event.contact.email}
+              value={event?.contact?.email}
               required
               fullWidth
               label="Email Id"
@@ -298,12 +379,12 @@ const ViewFormApplication = () => {
               disabled
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               size="small"
               name="mobile"
               type="number"
-              value={event.contact.mobile}
+              value={event?.contact?.mobile}
               required
               fullWidth
               label="Mobile Number"
@@ -311,12 +392,28 @@ const ViewFormApplication = () => {
               disabled
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <input type="file" name="leader-img" id="" />
-          </Grid>
+        </Grid>
+        <Grid continer spacing={2} sx={{ mb: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img
+              alt="leader"
+              src={event.imgUrl}
+              style={{
+                width: "250px",
+                height: "200px",
+                border: "2px solid #c6c3c373",
+              }}
+            />
+          </Box>
         </Grid>
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12}>
             <TextField
               name="sourceOfFunding"
               value={event.sourceOfFunding}
@@ -327,7 +424,7 @@ const ViewFormApplication = () => {
               rows={4}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               name="projectTitle"
               value={event.projectTitle}
@@ -338,7 +435,7 @@ const ViewFormApplication = () => {
               rows={4}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               name="projectObjective"
               value={event.projectObjective}
@@ -362,7 +459,7 @@ const ViewFormApplication = () => {
             <Grid item xs={12} sm={4}>
               <TextField
                 name="origin"
-                value={event.ideaOfProject.origin}
+                value={event?.ideaOfProject?.origin}
                 label="Origin of the Idea (Max. five sentences)"
                 multiline
                 fullWidth
@@ -373,7 +470,7 @@ const ViewFormApplication = () => {
             <Grid item xs={12} sm={4}>
               <TextField
                 name="methodology"
-                value={event.ideaOfProject.methodology}
+                value={event?.ideaOfProject?.methodology}
                 label="Methodology (Max. five sentences)"
                 multiline
                 fullWidth
@@ -429,7 +526,7 @@ const ViewFormApplication = () => {
           variant="outlined"
           type="number"
           disabled
-          value={event.member.length}
+          value={event?.member?.length}
         />
         {!!event.member.length &&
           [...Array(event.member.length)].map((_, idx) => (
@@ -437,26 +534,46 @@ const ViewFormApplication = () => {
           ))}
       </Paper>
       {position === 2 && (
-        <Paper sx={{ m: 2, p: 3 }}>
-          <Typography variant="h4" gutterBottom align="left">
-            Add Comment -
-          </Typography>
-          <TextField
-            name="projectObjective"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            label="Comment will be visible to super admin (optional) "
-            multiline
-            fullWidth
-            rows={4}
-          />
-          <Button variant="contained" onClick={handleComment} sx={{ m: 2 }}>
-            Add Comment
-          </Button>
+        <Paper sx={{ m: 2, p: 3, display: 'flex', gap: 5 }}>
+          <Box sx={{width: '50%'}}>
+            <Typography variant="h4" gutterBottom align="left">
+              Add Comment -
+            </Typography>
+            <TextField
+              name="comment"
+              value={comment.comment}
+              onChange={(e) => setComment({...comment, comment: e.target.value})}
+              label="Comment will be visible to super admin (optional) "
+              multiline
+              fullWidth
+              rows={4}
+            />
+            <Button variant="contained" onClick={handleComment} sx={{ m: 2 }}>
+              Add Comment
+            </Button>
+          </Box>
+          <Box sx={{width: '50%'}}>
+            <Typography variant="h4" gutterBottom align="left">
+              Add Verdict -
+            </Typography>
+            <TextField
+              name="verdict"
+              value={comment.verdict}
+              onChange={(e) => setComment({...comment, verdict: e.target.value})}
+              label="Vedict"
+              multiline
+              fullWidth
+              required
+              rows={4}
+            />
+            <Button variant="contained" onClick={handleComment} sx={{ m: 2 }}>
+              Add Review
+            </Button>
+          </Box>
         </Paper>
       )}
       {position === 3 && (
-        <Paper sx={{ m: 2, p: 3, }}>
+        <Paper sx={{ m: 2, p: 3 }}>
           <Typography variant="h5" gutterBottom align="left">
             Mentors' Comments -
           </Typography>
@@ -470,7 +587,7 @@ const ViewFormApplication = () => {
                   p: 2,
                   height: "max-content",
                   boxShadow: "var(--shadow-2)",
-                  backgroundColor: '#f9f1e66c'
+                  backgroundColor: "#f9f1e66c",
                 }}
               >
                 {u}
@@ -481,6 +598,14 @@ const ViewFormApplication = () => {
       )}
       {position === 3 && (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Button
+            variant="contained"
+            sx={{ m: 1 }}
+            color="secondary"
+            onClick={handleRevert}
+          >
+            Revert to mentor
+          </Button>
           <Button
             variant="contained"
             sx={{ m: 1 }}

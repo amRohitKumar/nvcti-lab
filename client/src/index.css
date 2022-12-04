@@ -3,30 +3,37 @@
 ::before {
   box-sizing: border-box;
 }
+
 html {
   scroll-behavior: smooth;
 }
+
 html,
 body,
 #root {
   height: 100%;
 }
+
 #root {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
+
 ::-webkit-scrollbar {
   width: 13px;
 }
+
 ::-webkit-scrollbar-thumb {
   background: hsla(0, 0%, 39.6%, 0.7);
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-track {
   border-radius: 3px;
   background-color: #bfbfbf;
 }
+
 :root {
   /* colors */
   /* --primary-50: #eff6ff;
@@ -91,9 +98,16 @@ body,
 .add-option-div {
   margin: 1em 0;
 }
+
 .add-option {
   cursor: pointer;
   color: #828df8;
   font-weight: 500;
   letter-spacing: 1.2px;
+}
+
+@media print {
+  .singlePage {
+    break-inside: avoid;
+  }
 }

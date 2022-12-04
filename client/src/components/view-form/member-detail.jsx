@@ -1,4 +1,4 @@
-import Wrapper from "../../pages/client/form/form.style";
+import Wrapper from "./form.style";
 import {
   Paper,
   Grid,
@@ -8,11 +8,12 @@ import {
   FormControl,
   Select,
   InputLabel,
+  Box,
 } from "@mui/material";
 
-const MemberDetail = ({member}) => {
+const MemberDetail = ({ member }) => {
   return (
-    <Wrapper>
+    <Wrapper className="singlePage">
       <Paper elevation={3} sx={{ mt: 4, p: 3 }}>
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={12} sm={4}>
@@ -30,7 +31,7 @@ const MemberDetail = ({member}) => {
               required
               fullWidth
               color="primary"
-              />
+            />
           </Grid>
           <Grid item xs={12} sm={4}>
             <FormControl fullWidth size="small">
@@ -70,7 +71,7 @@ const MemberDetail = ({member}) => {
               fullWidth
               label="Admission No."
               color="primary"
-              />
+            />
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -85,7 +86,7 @@ const MemberDetail = ({member}) => {
               fullWidth
               label="Department/Institute/Organization"
               color="primary"
-              />
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -98,11 +99,11 @@ const MemberDetail = ({member}) => {
               fullWidth
               label="Address (IIT-ISM students should write the Hostel address )"
               color="primary"
-              />
+            />
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               size="small"
               name="email"
@@ -113,9 +114,9 @@ const MemberDetail = ({member}) => {
               fullWidth
               label="Email Id"
               color="primary"
-              />
+            />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <TextField
               size="small"
               name="mobile"
@@ -128,9 +129,9 @@ const MemberDetail = ({member}) => {
               color="primary"
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <input type="file" name="leader-img" id="" />
-          </Grid>
+          <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', my: 2}}>
+            <img src={member.imgUrl} alt="member" style={{width: '250px', height: '200px', border: '2px solid #c6c3c373'}} />
+          </Box>
         </Grid>
       </Paper>
     </Wrapper>

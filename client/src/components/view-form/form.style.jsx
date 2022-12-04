@@ -25,6 +25,15 @@ const Wrapper = styled(Box)({
         maxWidth: '200px',
         'flexWrap': 'wrap'
     },
+    '.Mui-disabled': {
+        color: '#252525 !important',
+    },
+    '.MuiFormControlLabel-label.Mui-disabled': {
+        color: '#252525 !important',
+    },
+    '.MuiInputBase-input': {
+        '-webkit-text-fill-color': '#252525 !important',
+    }
 });
 
 export default Wrapper;

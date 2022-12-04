@@ -179,58 +179,64 @@ const ApplicationsList = ({ events, role, ...props }) => {
             </Button>
           )}
         </Box>
-          <Box sx={{ minWidth: 250, maxWidth: 1000, mx: "auto" }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Serial No.</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Applied on</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell align="center">Application</TableCell>
-                  <TableCell align="center">Select</TableCell>
-                  {/* FOR CHECKBOX */}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {events.map((res, idx) => (
-                  <TableRow hover key={idx}>
-                    <TableCell>{idx + 1}</TableCell>
-                    <TableCell>{res.projectTitle}</TableCell>
-                    <TableCell>
-                      {format(new Date(res.updated_at), "dd-MM-yyyy")}
-                    </TableCell>
-                    <TableCell>
-                      <StatusPill
-                        color={
-                          (res.status.toLowerCase() === "accepted" && "success") ||
-                          (res.status.toLowerCase() === "rejected" && "error") ||
-                          "warning"
-                        }
-                      >
-                        {res.status}
+        <Box sx={{ minWidth: 250, maxWidth: 1000, mx: "auto" }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Serial No.</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Applied on</TableCell>
+                <TableCell align="center">Status</TableCell>
+                <TableCell align="center">Application</TableCell>
+                <TableCell align="center">Select</TableCell>
+                {/* FOR CHECKBOX */}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {events.map((res, idx) => (
+                <TableRow hover key={idx}>
+                  <TableCell>{idx + 1}</TableCell>
+                  <TableCell>{res.projectTitle}</TableCell>
+                  <TableCell>
+                    {format(new Date(res.updated_at), "dd-MM-yyyy")}
+                  </TableCell>
+                  <TableCell align="center">
+                    <StatusPill
+                      color={
+                        (res.status.toLowerCase() === "accepted" &&
+                          "success") ||
+                        (res.status.toLowerCase() === "rejected" && "error") ||
+                        "warning"
+                      }
+                    >
+                      {res.status}
+                    </StatusPill>
+                    {role === "MENTOR" && res.reEvaluation && (
+                      <StatusPill color="warning" sx={{m: 1}}>
+                        {res.reEvaluation && "re-evaluate"}
                       </StatusPill>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Button
-                        variant="contained"
-                        size="small"
-                        onClick={() => openInNewTab(`/view/${res._id}`)}
-                      >
-                        View application
-                      </Button>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Checkbox
-                        checked={selected[idx]}
-                        onChange={() => handleCheckbox(idx)}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
+                    )}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={() => openInNewTab(`/view/${res._id}`)}
+                    >
+                      View application
+                    </Button>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Checkbox
+                      checked={selected[idx]}
+                      onChange={() => handleCheckbox(idx)}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Box>
       </Card>
     </Wrapper>
   );
