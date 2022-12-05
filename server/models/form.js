@@ -130,11 +130,16 @@ const formSchema = new Schema(
       type: String,
       default: "Pending",
     },
-    comments: [{
-      type: String 
-    }],
-    superadminComments: [{
-      type: String
+    mentorVerdict: [{
+      id: {
+        type: Schema.Types.ObjectId,
+      },
+      comments: {
+        type: String 
+      },
+      result: {
+        type: String
+      }
     }],
     forwardedBy: [{
       type: String
