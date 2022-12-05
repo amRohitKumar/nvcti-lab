@@ -70,12 +70,6 @@ router.route("/forward").post(
     console.log(applicants, mails);
     const applicantIds = applicants.map((id) => mongoose.Types.ObjectId(id));
 
-    for (var applicantId of applicantIds) {
-      var form = await Form.findById(applicantId);
-      form.forwardedBy = mails;
-      await form.save();
-    }
-
     for (var mail of mails) {
       const password = passGenerator(16);
       const name = Date.now();
@@ -124,6 +118,16 @@ router.route("/forwardsuperadmin").post(
   catchAsync(async (req, res) => {
     const { applicants } = req.body;
     const applicantIds = applicants.map((id) => mongoose.Types.ObjectId(id));
+
+    for (var applicantId of applicantIds) {
+      var form = await Form.findById(applicantId);
+      var forwardedBy = form.forwardedBy;
+      forwardedBy.push(req.user.mail);
+      form.forwardedBy = Array.from(new Set(forwardedBy));
+      form.reEvaluation = false;
+      await form.save();
+    }
+
     const superAdmin = await Evaluator.findOne({
       userId: "636d2c104e2cb9ed9e8a93a2",
     });
@@ -138,18 +142,26 @@ router.route("/addcomment").post(
   isAdmin,
   catchAsync(async (req, res) => {
     const form = await Form.findById(req.body.formId);
-    form.comments.push(req.body.comment);
-    await form.save()
-    res.status(200).send({ msg: "Comment added successfully!" });
-  })
-)
+    var ind = 0;
+    for (mentor of form.mentorVerdict) {
+      if (mentor.id == req.user._id) {
+        form.mentorVerdict.splice(ind, 1);
+        break;
+      }
+      ind += 1;
+    }
 
-router.route("/adminComment").post(
-  isLoggedIn,
-  isAdmin,
-  catchAsync(async (req, res) => {
-    const form = await Form.findById(req.body.formId);
-    form.superadminComments.push(req.body.comment);
+    var mentorResp = {
+      id: req.user._id,
+      comments: null,
+      result: null
+    }
+
+    mentorResp.comments = req.body.comment;
+    mentorResp.result = req.body.verdict;
+
+    form.mentorVerdict.push(mentorResp);
+
     await form.save()
     res.status(200).send({ msg: "Comment added successfully!" });
   })
