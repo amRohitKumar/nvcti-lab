@@ -554,13 +554,13 @@ const ViewFormApplication = () => {
           </Box>
           <Box sx={{width: '50%'}}>
             <Typography variant="h4" gutterBottom align="left">
-              Add Verdict -
+              Recommendation -
             </Typography>
             <TextField
               name="verdict"
               value={comment.verdict}
               onChange={(e) => setComment({...comment, verdict: e.target.value})}
-              label="Vedict"
+              label="Recommended/Not recommended"
               multiline
               fullWidth
               required

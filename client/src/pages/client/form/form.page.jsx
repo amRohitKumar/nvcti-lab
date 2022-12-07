@@ -1,4 +1,4 @@
-import { useState , useRef, useEffect} from "react";
+import { useState, useRef, useEffect } from "react";
 import customFetch from "../../../utils/axios";
 import authHeader from "../../../utils/userAuthHeaders";
 import { useNavigate } from "react-router-dom";
@@ -108,7 +108,6 @@ const FormApplication = () => {
     });
     setMembers(data);
   };
-  
 
   const handleSubmit = async () => {
     try {
@@ -126,30 +125,25 @@ const FormApplication = () => {
         members,
       };
       // console.table(obj);
-      await customFetch.post(
-        `/form/submit`,
-        obj,
-        authHeader(token)
-      );
+      await customFetch.post(`/form/submit`, obj, authHeader(token));
       setIsLoading(false);
-      navigate('/client');
-      toast.success("Form submitted successfully !")
+      navigate("/client");
+      toast.success("Form submitted successfully !");
     } catch (err) {
       setIsLoading(false);
       toast.error("Something went wrong while submitting !");
     }
   };
   const leaderImgRef = useRef();
-const leaderSignRef = useRef();
-useEffect(()=>{
-  console.log("Hello Member", members, leader)
-console.log(leaderImgRef.current.value, leaderSignRef.current.value);
-})
+  const leaderSignRef = useRef();
+  useEffect(() => {
+    console.log("Hello Member", members, leader);
+    console.log(leaderImgRef.current.value, leaderSignRef.current.value);
+  });
 
- 
   return (
     <Wrapper sx={{ width: { lg: "75%", md: "80%", sm: "85%", xs: "95%" } }}>
-      {isLoading&&<CircularLoader />}
+      {isLoading && <CircularLoader />}
       <Box>
         <Typography variant="h2" gutterBottom align="center">
           APPLICATION FORM TO ACCESS THE NVCTI LAB
@@ -346,10 +340,19 @@ console.log(leaderImgRef.current.value, leaderSignRef.current.value);
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <input type="file" ref={leaderImgRef} accept="image/png, image/jpeg" name="leader-img" onChange={ async(e)=>{
-              const res = await uploadImg(e.target.files[0]);
-              setLeader({ ...leader, imgUrl: res.display_url })
-            }} id="" />
+            <label htmlFor="leader-img">Leader Image</label>
+            <input
+              id="leader-img"
+              type="file"
+              ref={leaderImgRef}
+              accept="image/png, image/jpeg"
+              name="leader-img"
+              onChange={async (e) => {
+                const res = await uploadImg(e.target.files[0]);
+                setLeader({ ...leader, imgUrl: res.display_url });
+              }}
+              id=""
+            />
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -523,7 +526,12 @@ console.log(leaderImgRef.current.value, leaderSignRef.current.value);
           <div>
             <span style={{ fontWeight: "bold" }}>Team Leader signature:</span>{" "}
             &nbsp;
-            <input type="file" accept="image/png, image/jpeg" ref={leaderSignRef} name="leader-sign" />
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              ref={leaderSignRef}
+              name="leader-sign"
+            />
           </div>
 
           <Button variant="contained" onClick={handleSubmit}>
