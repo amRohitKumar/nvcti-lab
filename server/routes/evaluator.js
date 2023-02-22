@@ -128,7 +128,7 @@ router.route("/forwardsuperadmin").post(
       await form.save();
     }
 
-    const adminId = await User.findOne({ position: 1 });
+    const adminId = await User.findOne({ position: 3 });
 
     const superAdmin = await Evaluator.findOne({
       userId: adminId,
