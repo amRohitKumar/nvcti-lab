@@ -38,20 +38,35 @@ mongoose
     const exists = await User.findOne({ position: 1 });
 
     if (!exists) {
-      const salt = await bcrypt.genSalt(10);
+      const adminSalt = await bcrypt.genSalt(10);
       const admin = new User({
         email: "admin@nvcti.in",
         isVerified: true,
         position: 1,
-        password: await bcrypt.hash('12345678', salt),
+        password: await bcrypt.hash('12345678', adminSalt),
       });
       await admin.save();
+
+      const superAdminSalt = await bcrypt.genSalt(10);
+      const superAdmin = new User({
+        email: "superadmin@nvcti.in",
+        isVerified: true,
+        position: 3,
+        password: await bcrypt.hash('12345678', superAdminSalt),
+      });
+      await superAdmin.save();
       
       const adminEvaluator = new Evaluator({
         applicants: [],
         userId: admin._id,
       })
       await adminEvaluator.save();
+
+      const superAdminEvaluator = new Evaluator({
+        applicants: [],
+        userId: superAdmin._id,
+      })
+      await superAdminEvaluator.save();
     }
 
     console.log("MONGOOSE CONNECTION OPEN");
