@@ -159,8 +159,8 @@ router.route("/addcomment").post(
       result: null
     }
 
-    mentorResp.comments = req.body.comment;
-    mentorResp.result = req.body.verdict;
+    mentorResp.comments = req.body.comment.comment;
+    mentorResp.result = req.body.comment.verdict;
 
     form.mentorVerdict.push(mentorResp);
 
