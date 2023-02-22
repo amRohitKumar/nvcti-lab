@@ -67,7 +67,7 @@ router.route("/forward").post(
   isAdmin,
   catchAsync(async (req, res) => {
     const { applicants, mails } = req.body;
-    console.log(applicants, mails);
+    console.log("out", applicants, mails);
     const applicantIds = applicants.map((id) => mongoose.Types.ObjectId(id));
 
     for (var mail of mails) {
@@ -128,8 +128,10 @@ router.route("/forwardsuperadmin").post(
       await form.save();
     }
 
+    const adminId = await User.findOne({ position: 1 });
+
     const superAdmin = await Evaluator.findOne({
-      userId: "636d2c104e2cb9ed9e8a93a2",
+      userId: adminId,
     });
     applicantIds.forEach((id) => superAdmin.applicants.push(id));
     await superAdmin.save();
