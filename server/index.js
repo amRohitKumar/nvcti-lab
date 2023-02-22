@@ -9,9 +9,11 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 // MODELS
 const User = require("./models/user");
+const Evaluator = require("./models/evaluator");
 
 // MIDDLEWARES
 const { isLoggedIn } = require("./middleware");
@@ -32,7 +34,26 @@ const dbURL = process.env.DBURL || "mongodb://localhost:27017/nvcti-lab";
 
 mongoose
   .connect(dbURL)
-  .then(() => {
+  .then(async () => {
+    const exists = await User.findOne({ position: 1 });
+
+    if (!exists) {
+      const salt = await bcrypt.genSalt(10);
+      const admin = new User({
+        email: "admin@nvcti.in",
+        isVerified: true,
+        position: 1,
+        password: await bcrypt.hash('12345678', salt),
+      });
+      await admin.save();
+      
+      const adminEvaluator = new Evaluator({
+        applicants: [],
+        userId: admin._id,
+      })
+      await adminEvaluator.save();
+    }
+
     console.log("MONGOOSE CONNECTION OPEN");
   })
   .catch((err) => {
