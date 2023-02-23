@@ -24,7 +24,7 @@ module.exports.isLoggedIn = async (req, res, next) => {
 
 module.exports.isAdmin = async (req, res, next) => {
   // console.log("isadmin middlware");
-  console.log(req.user.position);
+  // console.log(req.user.position);
   if (
     req.user.position === 1 ||
     req.user.position === 2 ||

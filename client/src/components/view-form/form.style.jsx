@@ -4,6 +4,10 @@ import styled from "@emotion/styled";
 const Wrapper = styled(Box)({
     height: 'max-content',
     margin: '0 auto',
+    ".verdict-span": {
+        fontWeight: 'bold',
+        
+    },
     '.column-center': {
         display: 'flex',
         justifyContent: 'center',

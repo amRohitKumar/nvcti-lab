@@ -107,19 +107,19 @@ function App() {
           {/* ERROR ROUTE */}
           <Route exact path="*" element={<Error />}></Route>
         </Routes>
-        <ToastContainer
-          position="top-left"
-          autoClose={2000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          limit={1}
-          draggable
-          pauseOnHover
-        />
         <Footer />
       </ThemeProvider>
+      <ToastContainer
+        position="top-left"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        limit={1}
+        draggable
+        pauseOnHover
+      />
     </BrowserRouter>
   );
 }

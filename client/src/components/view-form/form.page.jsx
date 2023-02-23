@@ -66,7 +66,7 @@ const ViewFormApplication = () => {
       { formId, comment },
       authHeader(token)
     );
-    setComment("");
+    setComment({comment: '', verdict: ''});
     setIsLoading(false);
     toast.success("Comment added successfully !");
   };
@@ -578,7 +578,8 @@ const ViewFormApplication = () => {
             Mentors' Comments -
           </Typography>
           <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-            {event.comments.map((u, idx) => (
+            {console.log(event)}
+            {event.mentorVerdict.map((u, idx) => (
               <Paper
                 key={idx}
                 sx={{
@@ -590,7 +591,9 @@ const ViewFormApplication = () => {
                   backgroundColor: "#f9f1e66c",
                 }}
               >
-                {u}
+                <span className="verdict-span">Comment: </span>{u.comments}
+                <br />
+                <span className="verdict-span">Recommendation: </span>{u.result}
               </Paper>
             ))}
           </Box>

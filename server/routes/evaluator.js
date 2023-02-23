@@ -52,9 +52,9 @@ router.route("/update").post(
     }
   
     if (status.toLowerCase() == "accepted") {
-      user.notifications.unshift(`Your application for ${applicant.projectTitle} is accepted`);
+      user.notifications.unshift(`Your application for ${applicant.projectTitle} has been accepted`);
     } else if (status.toLowerCase() == "rejected") {
-      user.notifications.unshift(`Your application for ${applicant.projectTitle} is rejected`);
+      user.notifications.unshift(`Your application for ${applicant.projectTitle} has been rejected`);
     }
     user.isNewNotification = true;
     await user.save();
@@ -121,8 +121,8 @@ router.route("/forwardsuperadmin").post(
 
     for (var applicantId of applicantIds) {
       var form = await Form.findById(applicantId);
-      var forwardedBy = form.forwardedBy;
-      forwardedBy.push(req.user.mail);
+      var forwardedBy = form.forwardedBy || [];
+      forwardedBy.push(req.user.email);
       form.forwardedBy = Array.from(new Set(forwardedBy));
       form.reEvaluation = false;
       await form.save();
@@ -173,7 +173,9 @@ router.route("/revert").post(
   isLoggedIn,
   isAdmin,
   catchAsync(async (req, res) => {
-    const form = await Form.findById(req.body.applicationId);
+    // console.log(req.body.)
+    const form = await Form.findById(req.body.applicantId);
+    // console.log('rr',form);
     form.reEvaluation = true;
     await form.save();
     var textmsg = "Some applications need to be re-evaluated please login to view them";
