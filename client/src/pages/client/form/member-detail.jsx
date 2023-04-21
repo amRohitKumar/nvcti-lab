@@ -9,9 +9,8 @@ import {
   Select,
   InputLabel,
 } from "@mui/material";
-import { uploadImg } from "../../../utils/imageHelper";
 
-const MemberDetail = ({index, member, handleMembers}) => {
+const MemberDetail = ({ index, member, handleMembers }) => {
   return (
     <Wrapper>
       <Paper elevation={3} sx={{ mt: 4, p: 3 }}>
@@ -26,12 +25,12 @@ const MemberDetail = ({index, member, handleMembers}) => {
               size="small"
               name="name"
               value={member.name}
-              onChange={(e) => handleMembers(e,index)}
+              onChange={(e) => handleMembers(e, index)}
               type="text"
               required
               fullWidth
               color="primary"
-              />
+            />
           </Grid>
           <Grid item xs={12} sm={4}>
             <FormControl fullWidth size="small">
@@ -41,7 +40,7 @@ const MemberDetail = ({index, member, handleMembers}) => {
                 id="demo-simple-select"
                 name="gender"
                 value={member.gender}
-                onChange={(e) => handleMembers(e,index)}
+                onChange={(e) => handleMembers(e, index)}
                 label="Gender"
                 fullWidth
               >
@@ -66,12 +65,12 @@ const MemberDetail = ({index, member, handleMembers}) => {
               name="uniqueId"
               type="text"
               value={member.uniqueId}
-              onChange={(e) => handleMembers(e,index)}
+              onChange={(e) => handleMembers(e, index)}
               required
               fullWidth
               label="Admission No."
               color="primary"
-              />
+            />
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -81,12 +80,12 @@ const MemberDetail = ({index, member, handleMembers}) => {
               name="institute"
               type="text"
               value={member.institute}
-              onChange={(e) => handleMembers(e,index)}
+              onChange={(e) => handleMembers(e, index)}
               required
               fullWidth
               label="Department/Institute/Organization"
               color="primary"
-              />
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -94,12 +93,12 @@ const MemberDetail = ({index, member, handleMembers}) => {
               name="address"
               type="text"
               value={member.address}
-              onChange={(e) => handleMembers(e,index)}
+              onChange={(e) => handleMembers(e, index)}
               required
               fullWidth
               label="Address (IIT-ISM students should write the Hostel address )"
               color="primary"
-              />
+            />
           </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -109,12 +108,12 @@ const MemberDetail = ({index, member, handleMembers}) => {
               name="email"
               type="email"
               value={member.email}
-              onChange={(e) => handleMembers(e,index)}
+              onChange={(e) => handleMembers(e, index)}
               required
               fullWidth
               label="Email Id"
               color="primary"
-              />
+            />
           </Grid>
           <Grid item xs={12} sm={4}>
             <TextField
@@ -122,7 +121,7 @@ const MemberDetail = ({index, member, handleMembers}) => {
               name="mobile"
               type="number"
               value={member.mobile}
-              onChange={(e) => handleMembers(e,index)}
+              onChange={(e) => handleMembers(e, index)}
               required
               fullWidth
               label="Mobile Number"
@@ -130,16 +129,12 @@ const MemberDetail = ({index, member, handleMembers}) => {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <input type="file" accept="image/png, image/jpeg"  name="imgUrl" id="" onChange={ async(e)=>{
-              const res = await uploadImg(e.target.files[0]);
-              const event = {
-                target:{
-                  name:'imgUrl',
-                  value:res.display_url 
-                }
-              }
-              handleMembers(event,index);
-            }}  />
+            <input
+              type="file"
+              accept="image/png, image/jpeg, image/jpg"
+              name="member-img"
+              onChange={(e) => handleMembers(e, index)}
+            />
           </Grid>
         </Grid>
       </Paper>

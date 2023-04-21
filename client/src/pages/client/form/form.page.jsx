@@ -4,7 +4,6 @@ import authHeader from "../../../utils/userAuthHeaders";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Wrapper from "./form.style";
-import { uploadImg } from "../../../utils/imageHelper";
 
 import {
   Paper,
@@ -72,7 +71,9 @@ const FormApplication = () => {
     setUnit(data);
   };
   const handleLeader = (e) => {
-    setLeader({ ...leader, [e.target.name]: e.target.value });
+    if (e.target.name === "leader-img") {
+      setLeader({ ...leader, imgUrl: e.target.files[0] });
+    } else setLeader({ ...leader, [e.target.name]: e.target.value });
   };
   const handleProjectDetail = (e) => {
     setProjectDetail({ ...projectDetail, [e.target.name]: e.target.value });
@@ -102,7 +103,9 @@ const FormApplication = () => {
   const handleMembers = (e, idx) => {
     const data = members.map((el, i) => {
       if (i === idx) {
-        return { ...el, [e.target.name]: e.target.value };
+        if (e.target.name === "member-img") {
+          return { ...el, imgUrl: e.target.files[0] };
+        } else return { ...el, [e.target.name]: e.target.value };
       }
       return el;
     });
@@ -116,16 +119,23 @@ const FormApplication = () => {
       unitObj = unitObj.filter((e) => {
         if (e) return e;
       });
+      const form_data = new FormData();
+      const {imgUrl: leader_img_url, ...restLeader} = leader;
+      form_data.append("images", leader_img_url);
+      members.forEach(m => {
+        form_data.append("images", m.imgUrl);
+      });
       const obj = {
         category,
         unit: unitObj,
-        ...leader,
+        ...restLeader,
         ...projectDetail,
         ...projectIdea,
         members,
       };
+      // console.log(form_data.get("images"));
       // console.table(obj);
-      await customFetch.post(`/form/submit`, obj, authHeader(token));
+      await customFetch.post(`/form/submit`, form_data, obj, authHeader(token));
       setIsLoading(false);
       navigate("/client");
       toast.success("Form submitted successfully !");
@@ -135,10 +145,10 @@ const FormApplication = () => {
     }
   };
   const leaderImgRef = useRef();
-  const leaderSignRef = useRef();
+  // const leaderSignRef = useRef();
   useEffect(() => {
     console.log("Hello Member", members, leader);
-    console.log(leaderImgRef.current.value, leaderSignRef.current.value);
+    // console.log(leaderImgRef.current.value, leaderSignRef.current.value);
   });
 
   return (
@@ -345,13 +355,9 @@ const FormApplication = () => {
               id="leader-img"
               type="file"
               ref={leaderImgRef}
-              accept="image/png, image/jpeg"
+              accept="image/png, image/jpeg, image/jpg"
               name="leader-img"
-              onChange={async (e) => {
-                const res = await uploadImg(e.target.files[0]);
-                setLeader({ ...leader, imgUrl: res.display_url });
-              }}
-              id=""
+              // onChange={}
             />
           </Grid>
         </Grid>
@@ -487,8 +493,8 @@ const FormApplication = () => {
         </Typography>
         <Box>
           <Box sx={{ letterSpacing: "1.2px", mb: 2 }}>
-            I,&nbsp;{leaderName.toUpperCase()}&nbsp;(name of team leader) on my
-            personal and on behalf of all my members, do hereby state that
+            I,&nbsp;{leaderName.toUpperCase()} on my personal and on behalf of
+            all my members, do hereby state that
           </Box>
           <ul>
             <li>
@@ -515,7 +521,7 @@ const FormApplication = () => {
             </li>
           </ul>
         </Box>
-        <Box
+        {/* <Box
           sx={{
             my: 2,
             py: 2,
@@ -533,11 +539,10 @@ const FormApplication = () => {
               name="leader-sign"
             />
           </div>
-
-          <Button variant="contained" onClick={handleSubmit}>
-            Submit
-          </Button>
-        </Box>
+        </Box> */}
+        <Button variant="contained" onClick={handleSubmit} sx={{ mt: 5 }}>
+          Submit
+        </Button>
       </Paper>
     </Wrapper>
   );
